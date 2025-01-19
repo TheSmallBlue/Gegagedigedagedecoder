@@ -1,0 +1,109 @@
+[gd_scene load_steps=4 format=3 uid="uid://23pgvoqp20bn"]
+
+[ext_resource type="Script" path="res://Translator.cs" id="1_ddkrx"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_byg1j"]
+font_size = 41
+outline_size = 1
+
+[sub_resource type="LabelSettings" id="LabelSettings_w4mj7"]
+font_color = Color(1, 0.434811, 0.366139, 1)
+
+[node name="Control" type="Control" node_paths=PackedStringArray("_input", "_output", "_errorLabel")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ddkrx")
+_input = NodePath("HBoxContainer/Middle/Top/Input")
+_output = NodePath("HBoxContainer/Middle/Bottom/Output")
+_errorLabel = NodePath("HBoxContainer/Middle/VBoxContainer/WarningLabel")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Left" type="VBoxContainer" parent="HBoxContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+
+[node name="Middle" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="HBoxContainer/Middle"]
+layout_mode = 2
+text = "The Gegagedigedagedecoder "
+label_settings = SubResource("LabelSettings_byg1j")
+horizontal_alignment = 1
+
+[node name="Top" type="VBoxContainer" parent="HBoxContainer/Middle"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="HBoxContainer/Middle/Top"]
+layout_mode = 2
+text = "Input:"
+
+[node name="Input" type="TextEdit" parent="HBoxContainer/Middle/Top"]
+layout_mode = 2
+size_flags_vertical = 3
+placeholder_text = "GeDaGeDi"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/Middle"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+
+[node name="Middle" type="HBoxContainer" parent="HBoxContainer/Middle/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+
+[node name="Encode" type="Button" parent="HBoxContainer/Middle/VBoxContainer/Middle"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Encode!"
+
+[node name="Decode" type="Button" parent="HBoxContainer/Middle/VBoxContainer/Middle"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Decode!"
+
+[node name="WarningLabel" type="Label" parent="HBoxContainer/Middle/VBoxContainer"]
+layout_mode = 2
+label_settings = SubResource("LabelSettings_w4mj7")
+horizontal_alignment = 1
+
+[node name="Bottom" type="VBoxContainer" parent="HBoxContainer/Middle"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="HBoxContainer/Middle/Bottom"]
+layout_mode = 2
+text = "Output:"
+
+[node name="Output" type="TextEdit" parent="HBoxContainer/Middle/Bottom"]
+layout_mode = 2
+size_flags_vertical = 3
+placeholder_text = "Words Words Words"
+editable = false
+
+[node name="Bottom2" type="VBoxContainer" parent="HBoxContainer/Middle"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Right" type="VBoxContainer" parent="HBoxContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+
+[connection signal="pressed" from="HBoxContainer/Middle/VBoxContainer/Middle/Encode" to="." method="Encode"]
+[connection signal="pressed" from="HBoxContainer/Middle/VBoxContainer/Middle/Decode" to="." method="Decode"]
