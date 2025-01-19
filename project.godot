@@ -11,10 +11,12 @@ config_version=5
 [application]
 
 config/name="Gegagedigedagedecoder "
-config/description="Enter an interesting project description here!"
+config/description="Translate Gedagedi Language"
+config/version="1.0"
 run/main_scene="res://Main.tscn"
 config/features=PackedStringArray("4.3", "C#")
-config/icon="res://icon.png"
+boot_splash/show_image=false
+config/icon="res://nugget.png"
 
 [dotnet]
 
