@@ -5,4 +5,4 @@ Translate from Gedagedi language, and INTO gedagedi language!
 
 I don't know what else to say. Everything used to do the encoding/decoding is in the Translator.cs file, you may take a peek and take anything you want from it.
 
-# [Download Link](https://github.com/TheSmallBlue/Gegagedigedagedecoder/releases/tag/1.0)
+# [Download Link](https://github.com/TheSmallBlue/Gegagedigedagedecoder/releases/tag/v2.0)
