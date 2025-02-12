@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cjiekas01gfq0"
-path="res://.godot/imported/nugget.png-e9944c3eb866bbf75e2d9fb0faf554f4.ctex"
+uid="uid://twefqd80su7a"
+path="res://.godot/imported/GedaSpriteSheet.png-d52b3ebea796219ed2742fcbd36a6eae.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://nugget.png"
-dest_files=["res://.godot/imported/nugget.png-e9944c3eb866bbf75e2d9fb0faf554f4.ctex"]
+source_file="res://Visuals/GedaSpriteSheet.png"
+dest_files=["res://.godot/imported/GedaSpriteSheet.png-d52b3ebea796219ed2742fcbd36a6eae.ctex"]
 
 [params]
 

@@ -1,0 +1,136 @@
+[gd_resource type="VisualShader" load_steps=11 format=3 uid="uid://lr1whm0qc6rw"]
+
+[ext_resource type="Script" path="res://addons/UVManipulation.gd" id="1_lld72"]
+
+[sub_resource type="VisualShaderNodeFloatParameter" id="VisualShaderNodeFloatParameter_ottv4"]
+parameter_name = "Speed"
+default_value_enabled = true
+default_value = 0.5
+
+[sub_resource type="VisualShaderNodeFloatOp" id="VisualShaderNodeFloatOp_ikhgx"]
+operator = 2
+
+[sub_resource type="VisualShaderNodeFloatConstant" id="VisualShaderNodeFloatConstant_ba7fo"]
+constant = 1.0
+
+[sub_resource type="VisualShaderNodeVectorDecompose" id="VisualShaderNodeVectorDecompose_2jyvh"]
+default_input_values = [0, Quaternion(0, 0, 0, 0)]
+op_type = 2
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_gmk3s"]
+input_name = "uv"
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_v060d"]
+input_name = "texture"
+
+[sub_resource type="VisualShaderNodeTexture" id="VisualShaderNodeTexture_ghovl"]
+source = 5
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_3cg5x"]
+input_name = "time"
+
+[sub_resource type="VisualShaderNodeCustom" id="VisualShaderNodeCustom_sir18"]
+default_input_values = [0, null, 1, 15.0, 2, 0.0, 3, Vector2(0, 0), 4, Vector2(0, 0)]
+initialized = true
+script = ExtResource("1_lld72")
+
+[resource]
+code = "shader_type canvas_item;
+render_mode blend_mix;
+
+uniform float Speed = 0.5;
+
+
+// UVManipulation
+
+	
+	vec2 rotateUV(vec2 uv_in, float angle) {
+		float angle_rad = radians(angle);
+		mat2 rotate = mat2(
+			vec2(cos(angle_rad), -sin(angle_rad)),
+			vec2(sin(angle_rad), cos(angle_rad))
+		);
+		return rotate * uv_in;
+	}
+
+	vec2 UVManip(vec2 uv, float scale_placeholder, float rotation_placeholder, vec2 pivot_placeholder, vec2 offset_placeholder) {
+		vec2 pivot_internal = clamp(pivot_placeholder, 0.0, 1.0);
+		uv -= pivot_internal;
+		uv *= scale_placeholder;
+		uv = rotateUV(uv, rotation_placeholder);
+		uv += pivot_internal;
+		uv += offset_placeholder;
+		return uv;
+	}
+	
+	
+
+void fragment() {
+// Input:2
+	vec2 n_out2p0 = UV;
+
+
+// Input:5
+	float n_out5p0 = TIME;
+
+
+// FloatParameter:11
+	float n_out11p0 = Speed;
+
+
+// FloatOp:12
+	float n_out12p0 = n_out5p0 * n_out11p0;
+
+
+	vec2 n_out6p0;
+// UVManipulation:6
+	float n_in6p1 = 15.00000;
+	float n_in6p2 = 0.00000;
+	vec2 n_in6p3 = vec2(0.00000, 0.00000);
+	{
+		n_out6p0=UVManip(n_out2p0, n_in6p1, n_in6p2, n_in6p3, vec2(n_out12p0));
+	}
+
+
+	vec4 n_out4p0;
+// Texture2D:4
+	n_out4p0 = texture(TEXTURE, n_out6p0);
+
+
+// VectorDecompose:15
+	float n_out15p0 = n_out4p0.x;
+	float n_out15p1 = n_out4p0.y;
+	float n_out15p2 = n_out4p0.z;
+	float n_out15p3 = n_out4p0.w;
+
+
+// Output:0
+	COLOR.rgb = vec3(n_out4p0.xyz);
+	COLOR.a = n_out15p3;
+
+
+}
+"
+graph_offset = Vector2(-139.007, 142.626)
+mode = 1
+flags/light_only = false
+nodes/fragment/0/position = Vector2(1140, 80)
+nodes/fragment/2/node = SubResource("VisualShaderNodeInput_gmk3s")
+nodes/fragment/2/position = Vector2(-20, 240)
+nodes/fragment/3/node = SubResource("VisualShaderNodeInput_v060d")
+nodes/fragment/3/position = Vector2(280, 40)
+nodes/fragment/4/node = SubResource("VisualShaderNodeTexture_ghovl")
+nodes/fragment/4/position = Vector2(620, 40)
+nodes/fragment/5/node = SubResource("VisualShaderNodeInput_3cg5x")
+nodes/fragment/5/position = Vector2(-220, 380)
+nodes/fragment/6/node = SubResource("VisualShaderNodeCustom_sir18")
+nodes/fragment/6/position = Vector2(340, 240)
+nodes/fragment/11/node = SubResource("VisualShaderNodeFloatParameter_ottv4")
+nodes/fragment/11/position = Vector2(-180, 500)
+nodes/fragment/12/node = SubResource("VisualShaderNodeFloatOp_ikhgx")
+nodes/fragment/12/position = Vector2(140, 480)
+nodes/fragment/13/node = SubResource("VisualShaderNodeFloatConstant_ba7fo")
+nodes/fragment/13/position = Vector2(620, 340)
+nodes/fragment/15/node = SubResource("VisualShaderNodeVectorDecompose_2jyvh")
+nodes/fragment/15/position = Vector2(840, 140)
+nodes/fragment/connections = PackedInt32Array(3, 0, 4, 2, 5, 0, 12, 0, 11, 0, 12, 1, 6, 0, 4, 0, 4, 0, 0, 0, 4, 0, 15, 0, 15, 3, 0, 1, 12, 0, 6, 4, 2, 0, 6, 0)

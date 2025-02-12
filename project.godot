@@ -16,7 +16,7 @@ config/version="1.0"
 run/main_scene="res://Main.tscn"
 config/features=PackedStringArray("4.3", "C#")
 boot_splash/show_image=false
-config/icon="res://nugget.png"
+config/icon="res://Visuals/nugget.png"
 
 [dotnet]
 

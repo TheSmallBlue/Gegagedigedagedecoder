@@ -1,0 +1,21 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+          "label": "build",
+          "group": "build",
+          "type": "shell",
+          "command": "scons",
+          "args": [
+            // Use this when your default shell is Command Prompt (cmd.exe).
+            "-j %NUMBER_OF_PROCESSORS%",
+            // Use this when your default shell is PowerShell.
+            "-j $env:NUMBER_OF_PROCESSORS"
+          ],
+          "problemMatcher": "$msCompile"
+        }
+        
+    ]
+}
