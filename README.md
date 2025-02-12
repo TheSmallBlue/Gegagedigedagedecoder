@@ -1,4 +1,5 @@
-![imagen](https://github.com/user-attachments/assets/07b489b2-2a06-48f1-be57-5f27e8fa6097)
+
+![Gegagedigedagedecoder_4MboHRwWqX](https://github.com/user-attachments/assets/f237e252-6df7-490c-8185-40f4e7a075eb)
 
 Translate from Gedagedi language, and INTO gedagedi language!
 
