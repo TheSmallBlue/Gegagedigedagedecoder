@@ -21,8 +21,3 @@ config/icon="res://Visuals/nugget.png"
 [dotnet]
 
 project/assembly_name="Gedagi Translator"
-
-[rendering]
-
-renderer/rendering_method="gl_compatability"
-renderer/rendering_method.mobile="forward_plus"
