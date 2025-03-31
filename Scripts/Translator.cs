@@ -17,7 +17,13 @@ public partial class Translator : Control
 	[Export]
 	Label _errorLabel;
 
-	// --- Checks ---
+    public override void _Ready()
+    {
+        DisplayServer.WindowSetMinSize(new Vector2I(600, 400));
+    }
+
+
+	// --- Methods ---
 
 	#region Methods
 
