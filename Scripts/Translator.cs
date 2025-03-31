@@ -7,10 +7,7 @@ public partial class Translator : Control
 
 	// --- Reference variables ---
 
-	readonly string[] validPairs = new string[] { "ge","da","di","go","be","ka","ke","li","la","ko"};
-	readonly string[] validPunctuation = new string[] {" ", ",", ".", ":", ";", "\n", "?", "!", "'", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "&", "#", "/", "\\", "(", ")" };
-
-	readonly string alphabet = "abcdefghijklmnopqrstuvwxyz";
+	readonly string[] replacementArray = new string[] { "ge","da","di","go","be","ka","ke","li","la","ko"};
 
 	// --- Exposed parameters ---
 
@@ -20,11 +17,35 @@ public partial class Translator : Control
 	[Export]
 	Label _errorLabel;
 
-    // ---
-
 	// --- Checks ---
 
-	#region Checks
+	#region Methods
+
+	/// <summary>
+	/// Converts any letter into a number.
+	/// </summary>
+	/// <param name="chara"> The input character. </param>
+	/// <returns> The character as a number, or -1 if the input is not a letter. </returns>
+	int LetterToNumber(Char chara)
+	{
+		if(Char.IsLetter(chara))
+			return (int)Char.ToLower(chara) - (int)'a';
+		
+		return -1;
+	}
+
+	/// <summary>
+	/// Converts a number between 0 and 25 into a letter
+	/// </summary>
+	/// <param name="number"> The input number. Must be between 0 and 25. </param>
+	/// <returns> The number as a letter. </returns>
+	Char NumberToLetter(int number)
+	{
+		if(number >= 0 && number < 26)
+			return (char)('a' + number);
+
+		return '-';
+	}
 
 	/// <summary>
 	/// Checks whether if the input contains any valid letters.
@@ -33,7 +54,8 @@ public partial class Translator : Control
 	/// <returns></returns>
 	bool IsEmpty(string input)
 	{
-		if (RemovePunctuationOf(input).Length != 0) return false;
+		if (RemovePunctuation(input).Length != 0) 
+			return false;
 
 		SetErrorLabel("There's nothing to decode!");
 		return true;
@@ -46,118 +68,16 @@ public partial class Translator : Control
 	/// <returns></returns>
 	bool IsEven(string input)
 	{
-		if (RemovePunctuationOf(input).Length % 4 == 0)
+		if (RemovePunctuation(input).Length % 4 == 0)
 			return true;
 
 		SetErrorLabel("Input is not divisible by 4! It can't possibly be Gedagi language! (One character in gedagi language must consist of 4 letters)");
 		return false;
 	}
 
-	/// <summary>
-	/// Checkes whether if the given input consists of the valid Gedagi language "letters": GE, DA, DI, GO, BE, KA, KE, LI, LA and KO.
-	/// </summary>
-	/// <param name="input">The full, unedited text.</param>
-	/// <returns></returns>
-	bool AreCharactersValid(string input)
+	string RemovePunctuation(string input)
 	{
-		input = RemovePunctuationOf(input);
-
-		foreach (var pair in validPairs)
-		{
-			input = input.ReplaceN(pair,"");
-		}
-
-		if(input.Length == 0) return true;
-
-		SetErrorLabel("The input contains invalid Gedagi language! Gedagi language can ONLY consist of GE, DA, DI, GO, BE, KA, KE, LI, LA, and KO.");
-		return false;
-	}
-
-	/// <summary>
-	/// Checks whether if the Gedagi language "letters" are properly grouped into groups of two (two gedagi letters form a normal letter).
-	/// </summary>
-	/// <param name="input">The full, unedited text.</param>
-	/// <returns></returns>
-	bool AreGroupsValid(string input)
-	{
-		var groups = input.Split(" ");
-
-		Godot.Collections.Array<string> groupsNoPunctiation = new();
-		foreach (var group in groups)
-		{
-			groupsNoPunctiation.Add(RemovePunctuationOf(group));
-		}
-
-		foreach (var group in groupsNoPunctiation)
-		{
-			if(group.Length % 4 != 0) 
-			{
-				SetErrorLabel("There is a space that splits a character in half! (One character in gedagi language consists of four letters)");
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	/// <summary>
-	/// Checks whether if a given string is punctuation. If so, returns what punctuation it is with the out parameter.
-	/// </summary>
-	/// <param name="input">A letter</param>
-	/// <param name="punctuation">If succesful, gives what punctuation it is. If it isnt, gives an empty string. </param>
-	/// <returns></returns>
-	bool IsPunctuation(string input, out string punctuation)
-	{
-		var punctuationTypeIndex = Array.IndexOf(validPunctuation, input);
-		
-		if (punctuationTypeIndex != -1)
-		{
-			punctuation = validPunctuation[punctuationTypeIndex];
-			return true;
-		} else 
-		{
-			punctuation = "";
-			return false;
-		}
-	}
-
-	/// <summary>
-	/// Checks whether if the given text contains characters we haven't accounted for.
-	/// </summary>
-	/// <param name="input">The full, unedited text.</param>
-	/// <returns></returns>
-	bool IsTextValid(string input)
-	{
-		foreach (var validLetter in alphabet)
-		{
-			input = input.ReplaceN(validLetter.ToString(), "");
-		}
-
-		foreach (var punctuation in validPunctuation)
-		{
-			input = input.Replace(punctuation, "");
-		}
-
-		if(input.Length == 0) return true;
-
-		SetErrorLabel("Your text contains invalid characters!");
-
-		return false;
-	}
-
-	/// <summary>
-	/// Given a string, gives back that same string but with all punctuation removed.
-	/// </summary>
-	/// <param name="input">The full, unedited text.</param>
-	/// <returns></returns>
-	string RemovePunctuationOf(string input)
-	{
-		foreach (var punctuation in validPunctuation)
-		{
-			input = input.Replace(punctuation, "");
-		}
-
-		return input;
+		return new string(input.Where(x => Char.IsLetter(x)).ToArray());
 	}
 
 	#endregion

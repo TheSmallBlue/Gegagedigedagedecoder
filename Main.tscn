@@ -95,6 +95,7 @@ layout_mode = 2
 size_flags_vertical = 3
 theme = ExtResource("5_l0yhn")
 placeholder_text = "GeDaGeDi"
+wrap_mode = 1
 
 [node name="Buttons" type="VBoxContainer" parent="HBoxContainer/Middle"]
 custom_minimum_size = Vector2(0, 80)
@@ -122,6 +123,7 @@ text = "Decode!"
 layout_mode = 2
 label_settings = SubResource("LabelSettings_w4mj7")
 horizontal_alignment = 1
+autowrap_mode = 2
 
 [node name="Output" type="VBoxContainer" parent="HBoxContainer/Middle"]
 layout_mode = 2
@@ -139,6 +141,7 @@ size_flags_vertical = 3
 theme = ExtResource("5_l0yhn")
 placeholder_text = "Words Words Words"
 editable = false
+wrap_mode = 1
 
 [node name="Bottom2" type="VBoxContainer" parent="HBoxContainer/Middle"]
 custom_minimum_size = Vector2(0, 50)

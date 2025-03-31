@@ -1,10 +1,10 @@
 using Godot;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 public partial class Translator : Control
 {
-
 	#region Encode
 
 	public void Encode()
@@ -13,40 +13,43 @@ public partial class Translator : Control
 
 		// Is the string empty?
 		if (IsEmpty(input)) return;
-		// Does the text contain characters we didnt consider?
-		if (!IsTextValid(input)) return;
 
-		// Convert letters to numbers
-		Godot.Collections.Array<string> lettersToNumbers = new();
+		List<string> result = new();
+
 		foreach (var letter in input)
 		{
-			if (IsPunctuation(letter.ToString(), out string punctuation))
+			// Convert to number
+			int num = LetterToNumber(letter);
+
+			// If the letter couldn't be converted to number, pass it on as-is.
+			if(num == -1)
 			{
-				lettersToNumbers.Add(punctuation);
+				result.Add(letter.ToString());
+				continue;
+			}
+			// If the letter's number is bigger than 25, pass it on as-is.
+			// This is mainly to avoid having numbers that are 3 digits or more.
+			if(num > 25)
+			{
+				result.Add(letter.ToString());
 				continue;
 			}
 
-			lettersToNumbers.Add(Array.IndexOf(alphabet.ToArray(), letter.ToString().ToLower()[0]).ToString().PadZeros(2));
-		}
+			// Pad the number with two zeroes
+			string paddedNum = num.ToString().PadZeros(2);
 
-		// Convert pairs of numbers to gedagi letters
-		Godot.Collections.Array<string> numbersToGedas = new();
-		foreach (var number in lettersToNumbers)
-		{
-			if (IsPunctuation(number.ToString(), out string punctuation))
+			// Use each digit of the padded number as an index for our array of words to replace
+			foreach (var digit in paddedNum)
 			{
-				numbersToGedas.Add(punctuation);
-				continue;
-			}
-
-			foreach (var character in number)
-			{
-				numbersToGedas.Add(validPairs[character.ToString().ToInt()]);
+				var replacement = replacementArray[int.Parse(digit.ToString())];
+				replacement = char.IsUpper(letter) ? replacement.ToUpper() : replacement.ToLower();
+				
+				result.Add(replacement);
 			}
 		}
 
-		_output.Text = String.Join("", numbersToGedas);
-
+		// Join the string, shrimple!
+		_output.Text = String.Join("", result);
 		SetErrorLabel(" ");
 	}
 

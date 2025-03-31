@@ -1,10 +1,11 @@
 using Godot;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 public partial class Translator : Control
 {
-
     #region Decode
 	
     public void Decode()
@@ -15,88 +16,95 @@ public partial class Translator : Control
 		if(IsEmpty(input)) return;
 		// Is the string uneven?
 		if(!IsEven(input)) return;
-		// Does the string contain invalid characters?
-		if(!AreCharactersValid(input)) return;
-		// Are characters divided into groups of four?
-		if(!AreGroupsValid(input)) return;
 
-		// Divide into letter groups
-		Godot.Collections.Array<string> gedaGroups = new();
-		int lastGroupIndex = 0;
-		int spacelessIndex = 0;
-		for (int i = 0; i < input.Length; i++)
-		{		
-			// If this character is a space...
-			if (IsPunctuation(input[i].ToString(), out string punctuation))
+		List<string> result = new();
+
+		List<string> groups = new();
+		string currentLetters = "";
+
+		// Format the string into a list of strings
+		// The items in the string will either consist of groups of 4 letters, or punctuation/numbers.
+		foreach (var character in input)
+		{
+			// If this character is a letter...
+			if(char.IsLetter(character))
 			{
-				// Add it to the list
-				gedaGroups.Add(punctuation);
+				// Add it to our current letters string
+				currentLetters += character;
 
-				// Update our last group index
-				lastGroupIndex++;
+				// If we have 4 characters in that string, it means we have a pair!
+				if(currentLetters.Length == 4)
+				{
+					// Add it to the group.
+					groups.Add(currentLetters);
+					currentLetters = "";
+				}
+			} else // If this character is NOT a letter...
+			{
+				// Lets save whatever progress into current letters we may have
+				if(currentLetters.Length > 0)
+				{
+					groups.Add(currentLetters);
+					currentLetters = "";
+				}
 
-				// Continue without counting up the index
-				continue;
+				// Add the character into the list.
+				groups.Add(character.ToString());
 			}
-
-			// If this character isn't a space, add one to our index
-			spacelessIndex++;
-
-			// If our current index is not divisible by 4, we keep going
-			if(spacelessIndex % 4 != 0) continue;
-
-
-			// If it IS divisible by 4, it means we have a letter! Add it to our list.
-			gedaGroups.Add(input.Substr(lastGroupIndex, i - lastGroupIndex + 1));
-
-			lastGroupIndex = i + 1;
 		}
 
-		// Convert geda groups into numbers
-		Godot.Collections.Array<string> alphabetNumbers = new();
-		foreach (var group in gedaGroups)
+		// In case we have any unfinish letters leftover, lets just save em onto the list as well.
+		if (currentLetters.Length > 0)
 		{
-			// If space, add space and continue
-			if(IsPunctuation(group, out string punctuation))
-			{
-				alphabetNumbers.Add(punctuation);
-				continue;
-			}
-
-			// If not a space, divide 4-letter group into pairs, convert each pair into a number.
-			Godot.Collections.Array<string> characterNumbers = new();
-			int lastPairIndex = 0;
-			for (int i = 1; i < group.Length + 1; i++)
-			{
-				if(i % 2 != 0) continue;
-
-				string pair = group.Substr(lastPairIndex, i - lastPairIndex);
-				string number = Array.IndexOf(validPairs, pair.ToLower()).ToString();
-				characterNumbers.Add(number);
-
-				lastPairIndex = i;
-			}
+			groups.Add(currentLetters);
+		}
+		
+		foreach (var pair in groups)
+		{
 			
-			alphabetNumbers.Add(String.Join("", characterNumbers));
-		}
-
-		// Convert numbers into letters
-		Godot.Collections.Array<string> lettersList = new();
-		foreach (var number in alphabetNumbers)
-		{
-			if(IsPunctuation(number, out string punctuation))
+			// If our 'pair' is not 4 characters, it means its not a pair at all!
+			// We have to handle these cases separately then.
+			if(pair.Length != 4)
 			{
-				lettersList.Add(punctuation);
-				continue;
+				// If it's only one character, and it isnt a letter, it means its punctuation!
+				// Let's just pass it on as is.
+				if(pair.Length == 1)
+				{
+					result.Add(pair);
+					continue;
+				} else // If not, then it means something's wrong in the input! Let's exit.
+				{
+					SetErrorLabel("There is a letter split in half! Each letter consists of a group of 4 pairs. Make sure there isnt a space between them, like 'ge da'.");
+					return;
+				}
 			}
 
-			int numberInt = number.ToInt();
-			lettersList.Add(alphabet[numberInt].ToString().ToUpper());
+			// Now that we know we have a valid pair, lets convert it into a number
+			// Get the numbers of each half of the pair.
+			// We do this by getting the index of the string in the word replacement array.
+			var firstNumber = Array.IndexOf(replacementArray, pair.Substring(0, 2).ToLower());
+			var secondNumber = Array.IndexOf(replacementArray, pair.Substring(2, 2).ToLower());
+
+			// If we cant find one or both of the words, error out.
+			if(firstNumber == -1 || secondNumber == -1)
+			{
+				GD.Print(pair);
+				SetErrorLabel("Input text is not valid! The text must consist of groups of 4 of the following: ge, da, di, go, be, ka, ke, li, la and ko");
+				return;
+			}
+
+			// Get the combined number.
+			int combinedNumber = int.Parse(string.Concat(firstNumber, secondNumber));
+
+			// Convert that number into a letter.
+			var letter = NumberToLetter(combinedNumber).ToString();
+			letter = pair.All(c => char.IsUpper(c)) ? letter.ToUpper() : letter.ToLower();
+
+			// Add it to the result.
+			result.Add(letter);
 		}
 
-		// Join letters together, done!
-		_output.Text = String.Join("", lettersList);
-
+		_output.Text = String.Join("", result);
 		SetErrorLabel(" ");
 	}
 
